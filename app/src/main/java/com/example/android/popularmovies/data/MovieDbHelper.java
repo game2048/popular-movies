@@ -31,7 +31,7 @@ import com.example.android.popularmovies.data.MovieContract.MovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 7;
 
     static final String DATABASE_NAME = "weather.db";
 
@@ -47,11 +47,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 MovieEntry.COLUMN_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_DATE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_POPULARITY + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_POPULARITY + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_POSTERPATH + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_USERRATING + " TEXT NOT NULL " +
+                MovieEntry.COLUMN_MOVIE_USERRATING + " REAL NOT NULL, " +
+                MovieEntry.COLUMN_MOVIE_FAV + " TEXT " +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);

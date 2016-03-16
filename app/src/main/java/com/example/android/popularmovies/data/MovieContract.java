@@ -104,10 +104,10 @@ public class MovieContract {
         }
 
 
-        public static Uri buildWeatherLocationWithMovieId(
-                String movieId) {
+        public static Uri buildFavMovieUri(
+                ) {
             return CONTENT_URI.buildUpon()
-                    .appendQueryParameter(COLUMN_MOVIE_ID, movieId).build();
+                    .appendPath("FAV").build();
         }
 
         public static String getMovieIdFromUri(Uri uri) {

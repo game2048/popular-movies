@@ -36,6 +36,7 @@ public class MovieProvider extends ContentProvider {
 
     static final int MOVIE = 100;
     static final int MOVIE_WITH_ID = 101;
+    static final int MOVIE_FAV = 102;
 
     private static final SQLiteQueryBuilder sMovieByIdQueryBuilder;
 
@@ -53,6 +54,10 @@ public class MovieProvider extends ContentProvider {
             MovieContract.MovieEntry.TABLE_NAME+
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
 
+    private static final String sFavSelection =
+            MovieContract.MovieEntry.TABLE_NAME+
+                    "." + MovieContract.MovieEntry.COLUMN_MOVIE_FAV + " = ? ";
+
 
     private Cursor getWeatherByMovieId(Uri uri, String[] projection, String sortOrder) {
         String movieId = MovieContract.MovieEntry.getMovieIdFromUri(uri);
@@ -62,6 +67,25 @@ public class MovieProvider extends ContentProvider {
 
         selectionArgs = new String[]{movieId};
         selection = sMovieIdSelection;
+
+        return sMovieByIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor getfavMovies(Uri uri, String[] projection, String sortOrder) {
+        String movieId = MovieContract.MovieEntry.getMovieIdFromUri(uri);
+
+        String[] selectionArgs;
+        String selection;
+
+        selectionArgs = new String[]{"True"};
+        selection = sFavSelection;
 
         return sMovieByIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
@@ -91,6 +115,7 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/FAV", MOVIE_FAV);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_ID);
         return matcher;
     }
@@ -122,6 +147,8 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_WITH_ID:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
+            case MOVIE_FAV:
+                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -152,6 +179,10 @@ public class MovieProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+            }
+            case MOVIE_FAV: {
+                retCursor = getfavMovies(uri, projection, sortOrder);
                 break;
             }
 

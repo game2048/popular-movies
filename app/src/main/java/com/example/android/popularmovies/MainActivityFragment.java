@@ -198,7 +198,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         // Sort order:  Ascending, by date.
 //        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
-        Uri movieUri = MovieContract.MovieEntry.buildMovieUri();
+        Uri movieUri =  null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String units = prefs.getString(getString(R.string.pref_metric_key),
+                getString(R.string.pref_location_default));
+        if(units.equalsIgnoreCase("most popular")|| units.equalsIgnoreCase("highest-rated")) {
+             movieUri = MovieContract.MovieEntry.buildMovieUri();
+        }
+        else {
+            movieUri = MovieContract.MovieEntry.buildFavMovieUri();
+        }
 
         return new CursorLoader(getActivity(),
                 movieUri,
