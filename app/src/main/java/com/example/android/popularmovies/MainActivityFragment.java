@@ -68,6 +68,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     ArrayList<Movie> movie = null;
     ImageListAdapter mImage = null;
     private static final int MOVIE_LOADER = 0;
+    String sortOrder [] = {MovieContract.MovieEntry.COLUMN_MOVIE_POPULARITY + " DESC LIMIT 20",MovieContract.MovieEntry.COLUMN_MOVIE_USERRATING + " DESC LIMIT 20"};
+    String sort = MovieContract.MovieEntry.COLUMN_MOVIE_POPULARITY + " DESC LIMIT 20";
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -161,11 +163,21 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //                getString(R.string.pref_location_default));
         String units = prefs.getString(getString(R.string.pref_metric_key),
                 getString(R.string.pref_location_default));
-        if(units.equalsIgnoreCase("most popular"))
+        if(units.equalsIgnoreCase("most popular")) {
             units = "popularity.desc";
-        else if(units.equalsIgnoreCase("highest-rated"))
+            sort = sortOrder[0];
+            weatherTask.execute(location, units);
+        }
+        else if(units.equalsIgnoreCase("highest-rated")) {
             units = "vote_average.desc";
-        weatherTask.execute(location, units);
+            sort = sortOrder[1];
+            weatherTask.execute(location, units);
+        }
+    }
+
+    void onLocationChanged( ) {
+        updateWeather();
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
     @Override
@@ -193,7 +205,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 FORECAST_COLUMNS,
                 null,
                 null,
-                null);
+                sort);
     }
 
     @Override
@@ -311,7 +323,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                         .appendQueryParameter(FORMAT_PARAM, params[1])
 //                        .appendQueryParameter(UNITS_PARAM, params[1])
 //                        .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-                        .appendQueryParameter(APPID_PARAM, "")
+                        .appendQueryParameter(APPID_PARAM, "55a251bf633dd3c8e35ec5efa8722860")
                         .build();
 
                 URL url = new URL(builtUri.toString());
