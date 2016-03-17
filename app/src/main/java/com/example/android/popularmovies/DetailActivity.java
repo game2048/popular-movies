@@ -1,7 +1,11 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -14,10 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.android.popularmovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
@@ -86,6 +92,10 @@ public class DetailActivity extends AppCompatActivity {
 
         private static final int DETAIL_LOADER = 0;
         private static final String LOG_TAG = DetailActivity.class.getSimpleName();
+        private final Context mContext;
+        private String movieId = null;
+
+
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -104,6 +114,7 @@ public class DetailActivity extends AppCompatActivity {
             MovieContract.MovieEntry.COLUMN_MOVIE_TITLE
     };
         public PlaceholderFragment() {
+            mContext= getActivity();
         }
 
         @Override
@@ -132,8 +143,60 @@ public class DetailActivity extends AppCompatActivity {
 //                        .setRating(Float.parseFloat(movie.UserRating)/2);
 
 //            }
+            final ToggleButton quantityTextView = (ToggleButton) rootView.findViewById(
+                    R.id.toggleButton);
+//            ContentValues values = new ContentValues();
+//            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV,"True");
+//            int insertedUri = mContext.getContentResolver().update(MovieContract.MovieEntry.buildMovieUri(),values,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "?",new String[] {String.valueOf(movieId)});
+
+            quantityTextView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
+                    System.out
+                            .println("On click of the Toggle Button is called !!");
+                    if (quantityTextView.isChecked()) {
+                        System.out.println("Checked");
+                        ContentValues values = new ContentValues();
+                        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV, "True");
+                        UpdateDbTask weatherTask = new UpdateDbTask(getActivity());
+                        weatherTask.execute();
+                    } else {
+                        System.out.println("Not Checked ");
+                    }
+                }
+            });
+
+
+
+//
+//                Object forecast = mImage.getItem(position);
+//
+//                System.out.println("Beforeeeee" + forecast.Id);
+//                Intent intent = new Intent(getActivity(), DetailActivity.class)
+//                        .putExtra(Intent.EXTRA_TEXT, forecast);
+//                startActivity(intent);
+
             return rootView;
         }
+
+    public class UpdateDbTask extends AsyncTask<String, Void, Void> {
+        private final Context mContext;
+
+        public UpdateDbTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV,"True");
+            System.out.println("Update");
+            int insertedUri = mContext.getContentResolver().update(MovieContract.MovieEntry.buildMovieUri(),values,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",new String[] {String.valueOf(movieId)});
+            return null;
+        }
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -180,6 +243,7 @@ public class DetailActivity extends AppCompatActivity {
                         .into((ImageView) imageView);
                 ((RatingBar) getView().findViewById(R.id.ratingBarID))
                         .setRating(Float.parseFloat(data.getString(6)) / 2);
+        movieId = data.getString(2);
 
 
         // If onCreateOptionsMenu has already happened, we need to update the share intent now.
@@ -192,5 +256,16 @@ public class DetailActivity extends AppCompatActivity {
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+//    public void updateFav(View view) {
+//        ToggleButton quantityTextView = (ToggleButton) getView().findViewById(
+//                R.id.toggleButton);
+//        ContentValues values = new ContentValues();
+//        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV,"True");
+//        int insertedUri = mContext.getContentResolver().update(MovieContract.MovieEntry.buildMovieUri(),values,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "?",new String[] {String.valueOf(movieId)});
+//
+//
+//    }
 }
+
 }
