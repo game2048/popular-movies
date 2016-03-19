@@ -31,7 +31,7 @@ import com.example.android.popularmovies.data.MovieContract.MovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     static final String DATABASE_NAME = "weather.db";
 

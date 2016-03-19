@@ -84,7 +84,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selectionArgs = new String[]{"True"};
+        selectionArgs = new String[]{"true"};
         selection = sFavSelection;
 
         return sMovieByIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),

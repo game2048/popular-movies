@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private String sortOrder;
+    private boolean mTwoPane;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sortOrder = getSortOrder(this);
@@ -29,10 +30,26 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, new MainActivityFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.fragment, new MainActivityFragment(), FORECASTFRAGMENT_TAG)
+//                    .commit();
+
+            if (findViewById(R.id.movie_detail_container) != null) {
+             // The detail container view will be present only in the large-screen layouts
+             // (res/layout-sw600dp). If this view is present, then the activity should be
+             // in two-pane mode.
+             mTwoPane = true;
+             // In two-pane mode, show the detail view in this activity by
+             // adding or replacing the detail fragment using a
+             // fragment transaction.
+             if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailActivityFragment(), FORECASTFRAGMENT_TAG)
+                           .commit();
+                    }
+                } else {
+                  mTwoPane = false;
         }
     }
 
@@ -67,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         String sort =getSortOrder(this);
         // update the location in our second pane using the fragment manager
         if (sort != null && !sort.equals(sortOrder)) {
-            MainActivityFragment ff = (MainActivityFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            MainActivityFragment ff = (MainActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
             if ( null != ff ) {
                 ff.onLocationChanged();
             }

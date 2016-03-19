@@ -59,7 +59,7 @@ public class DetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.movie_detail_container, new PlaceholderFragment())
                     .commit();
         }
     }
@@ -134,7 +134,8 @@ public class DetailActivity extends AppCompatActivity {
             MovieContract.MovieEntry.COLUMN_MOVIE_POPULARITY,
             MovieContract.MovieEntry.COLUMN_MOVIE_DATE,
             MovieContract.MovieEntry.COLUMN_MOVIE_USERRATING,
-            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE
+            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_FAV
     };
         public PlaceholderFragment() {
             mContext= getActivity();
@@ -187,16 +188,15 @@ public class DetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View v) {
-
+                    UpdateDbTask movieUpdateTask = new UpdateDbTask(getActivity());
                     System.out
                             .println("On click of the Toggle Button is called !!");
                     if (quantityTextView.isChecked()) {
                         System.out.println("Checked");
-                        ContentValues values = new ContentValues();
-                        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV, "True");
-                        UpdateDbTask weatherTask = new UpdateDbTask(getActivity());
-                        weatherTask.execute();
+
+                        movieUpdateTask.execute("true");
                     } else {
+                        movieUpdateTask.execute("false");
                         System.out.println("Not Checked ");
                     }
                 }
@@ -440,7 +440,7 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             ContentValues values = new ContentValues();
-            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV,"True");
+            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV,params[0]);
             System.out.println("Update");
             int insertedUri = mContext.getContentResolver().update(MovieContract.MovieEntry.buildMovieUri(),values,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",new String[] {String.valueOf(movieId)});
             return null;
@@ -492,6 +492,7 @@ public class DetailActivity extends AppCompatActivity {
                         .into((ImageView) imageView);
                 ((RatingBar) getView().findViewById(R.id.ratingBarID))
                         .setRating(Float.parseFloat(data.getString(6)) / 2);
+        ((ToggleButton) getView().findViewById(R.id.toggleButton)).setChecked(Boolean.parseBoolean(data.getString(8).toString()));
         movieId = data.getString(2);
         updateReviews(movieId);
         List<String> reviews = new ArrayList<String>();

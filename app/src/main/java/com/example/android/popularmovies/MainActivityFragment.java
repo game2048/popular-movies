@@ -401,6 +401,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTERPATH, s1[i]);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POPULARITY, popularity.get(i));
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_USERRATING, rating.get(i));
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAV, "false");
 
                         cVVector.add(movieValues);
 

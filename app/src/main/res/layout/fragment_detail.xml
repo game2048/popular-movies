@@ -59,7 +59,8 @@
         android:layout_toRightOf="@+id/movieImageID"
         android:layout_toEndOf="@+id/movieImageID"
         android:onClick="updateFav"
-        />
+        android:textOff="Favourite Movie UnMarked"
+        android:textOn="Favourite Movie Marked" />
 
     <ImageButton
         android:layout_width="100dp"
